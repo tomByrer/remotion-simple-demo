@@ -1,4 +1,5 @@
 /* https://www.remotion.dev/docs/ssr */
+import path from "path";
 import { bundle } from "@remotion/bundler";
 import { getCompositions, renderMedia } from "@remotion/renderer";
 
@@ -6,9 +7,9 @@ const start = async () => {
   // The composition you want to render
   const compositionId = "HelloWorld";
 
-  // Create a webpack bundle of the video.
+  console.log(`Creating webpack bundle of the video.`)
   // You only have to do this once, you can reuse the bundle.
-  const bundleLocation = await bundle(require.resolve("./src/index"));
+  const bundleLocation = await bundle(path.resolve("./src/index"));
 
   // Parametrize the video by passing arbitrary props to your component.
   const inputProps = {
@@ -29,14 +30,17 @@ const start = async () => {
 
   // Ensure the composition exists
   if (!composition) {
-    throw new Error(`No composition with the ID ${compositionId} found`);
+    throw new Error(`No composition with the ID ${compositionId} found.
+  Review "src/Video.jsx" for the correct ID.`);
   }
 
+  const outputLocation = `out/${compositionId}.mp4`;
+  console.log("Attempting to render:", outputLocation)
   await renderMedia({
     composition,
     serveUrl: bundleLocation,
     codec: "h264",
-    outputLocation: `out/${compositionId}.mp4`,
+    outputLocation: outputLocation,
     inputProps,
   });
 };
